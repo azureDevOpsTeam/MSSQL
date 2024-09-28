@@ -55,7 +55,7 @@ cd DratonApiPublish
 mkdir /var/www/DratonApi
 sudo cp * /var/www/DratonApi
 sudo nano /etc/nginx/sites-available/api.draton.io
-
+```
 server {
     listen 443 ssl;
     server_name api.draton.io;
@@ -76,9 +76,8 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-
 }
-
+```
 # Redirect HTTP to HTTPS
 server {
     listen 80;
@@ -92,7 +91,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 
 sudo nano /etc/systemd/system/dratonapi.service   ******
-
+```
 [Unit]
 Description=Draton API Service
 After=network.target
@@ -109,7 +108,7 @@ Group=www-data
 
 [Install]
 WantedBy=multi-user.target
-
+```
 
 
 
@@ -127,7 +126,7 @@ sudo cp * /var/www/html -r
 
 sudo nano /etc/nginx/sites-available/bot.draton.io    *******
 
-
+```
 server {
     listen 443 ssl;
     server_name bot.draton.io;
@@ -144,8 +143,6 @@ server {
     location / {
         try_files $uri $uri/ =404;
     }
-
-
 }
 
 # Redirect HTTP to HTTPS
@@ -158,10 +155,8 @@ server {
     listen 80;
     server_name bot.draton.io;
     return 301 https://$host$request_uri;
-
-
 }
-
+```
 
 
 
