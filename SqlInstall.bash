@@ -38,7 +38,7 @@ sudo apt-get update
 
 # نصب ابزارهای MSSQL
 echo "Installing MSSQL tools..."
-sudo apt-get install -y mssql-tools18 unixodbc-dev
+sudo apt-get install mssql-tools18 unixodbc-dev
 
 # بروزرسانی دوباره لیست بسته‌ها
 echo "Updating package lists again..."
@@ -46,7 +46,7 @@ sudo apt-get update
 
 # نصب دوباره ابزارهای MSSQL
 echo "Installing MSSQL tools again..."
-sudo apt-get install -y mssql-tools18
+sudo apt-get install mssql-tools18
 
 # افزودن ابزارهای MSSQL به PATH
 echo "Updating PATH for MSSQL tools..."
