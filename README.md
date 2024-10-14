@@ -35,7 +35,7 @@ wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.
 sudo dpkg -i packages-microsoft-prod.deb
 sudo apt update -y
 sudo apt install -y dotnet-sdk-8.0
-sudo apt install nginx
+sudo apt install nginx -y
 sudo apt install certbot python3-certbot-nginx
 sudo certbot --nginx -d api.draton.io
 sudo certbot --nginx -d bot.draton.io
@@ -90,8 +90,8 @@ Description=Draton API Service
 After=network.target
 
 [Service]
-WorkingDirectory=/var/www/api
-ExecStart=/usr/bin/dotnet /var/www/api/PresentationWebApp.dll
+WorkingDirectory=/var/www/api/publish
+ExecStart=/usr/bin/dotnet /var/www/api/publish/PresentationWebApp.dll
 Restart=always
 # Environment variables for ASP.NET Core
 Environment=ASPNETCORE_ENVIRONMENT=Production
@@ -111,6 +111,12 @@ eval "$(ssh-agent -s)"
 
 ssh-add ~/.ssh/id_rsa_api
 ssh-add ~/.ssh/id_rsa_client
+
+cat ~/.ssh/id_rsa_api
+cat ~/.ssh/id_rsa_api.pub
+
+cat ~/.ssh/id_rsa_client
+cat ~/.ssh/id_rsa_client.pub
 
 #Add Publish Key To this File : 
 nano ~/.ssh/authorized_keys
@@ -176,6 +182,67 @@ sudo apt update
 sudo apt install python3-pip
 
 pip install python-telegram-bot
+
+mkdir /var/www/bot
+sudo nano /var/www/bot/start.py
+
+```
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackContext
+
+# Function to start the bot
+async def start(update: Update, context: CallbackContext) -> None:
+    # Get user information
+    user = update.effective_user
+    referral_code = context.args[0] if context.args else None
+
+    # Determine the correct URL based on whether referral code exists
+    if referral_code:
+        myUrl = f"https://bot.draton.io?referral={referral_code}"
+    else:
+        myUrl = "https://bot.draton.io"
+
+    # Create an inline button with WebApp
+    keyboard = [
+        [InlineKeyboardButton("Open Mini App", web_app=WebAppInfo(url=myUrl))]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    # Send a message with the referral code (if any)
+    if referral_code:
+        await update.message.reply_text(
+                f"Hello {user.first_name}! Welcome!"
+                f"Welcome, Adventurer! 🏰🐉\n\n"
+                f"You've entered the realm of **Dragon's Treasure**! With your referral code: **{referral_code}**, "
+                f"you're on the path to riches. Get ready to uncover hidden treasures and claim your **TON** rewards.\n\n"
+                f"Your epic journey begins now—let the adventure unfold!",
+                reply_markup=reply_markup
+                )
+    else:
+        await update.message.reply_text(
+                "Welcome, Brave Adventurer! 🏰🐉\n\n"
+                "You've stepped into the enchanting world of **Dragon's Treasure**! Although you don't have a referral code, "
+                "your journey is just beginning.\n\n"
+                "Prepare to uncover hidden treasures and unlock amazing rewards in **TON**. The dragons await your challenge, "
+                "and epic adventures lie ahead!\n\n"
+                "Get ready to embark on your quest—let the adventure unfold!",
+                reply_markup=reply_markup
+                )
+
+if __name__ == '__main__':
+    # Create an application
+    application = ApplicationBuilder().token('7305923163:AAHu6Ka30ODUxv9IoO0hy0nnmbNnt8bs4Rs').build()
+
+    # Add handler for the /start command
+    application.add_handler(CommandHandler('start', start))
+
+    # Run the bot
+    application.run_polling()
+
+```
+
+sudo systemctl reload nginx
+
 
 #add screen 
 screen -S startBot
