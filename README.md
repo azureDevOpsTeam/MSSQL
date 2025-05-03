@@ -1,3 +1,6 @@
+sudo apt update
+sudo apt install -y git
+
 UBUNTU 24.04
 
 #Install Dotnet 9
