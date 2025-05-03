@@ -1,6 +1,6 @@
 ```
 curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2019.list)"
 sudo apt-get update
 sudo apt-get install -y mssql-server
 sudo /opt/mssql/bin/mssql-conf setup
@@ -9,7 +9,7 @@ systemctl status mssql-server --no-pager
 
 ```
 curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
 sudo apt-get update
 sudo apt-get install mssql-tools18 unixodbc-dev
 
@@ -31,7 +31,7 @@ sqlcmd -S localhost -U sa -P 'Aa123456@' -N -C
 ```
 sudo apt upgrade -y
 
-wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 sudo dpkg -i packages-microsoft-prod.deb
 sudo apt update -y
 sudo apt install -y dotnet-sdk-8.0
