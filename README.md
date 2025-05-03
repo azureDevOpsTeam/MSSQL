@@ -24,7 +24,7 @@ source ~/.bashrc
 ```
 
 #Test Connection To SqlCmd 
-sqlcmd -S localhost -U sa -P '#L64$h65J68#' -N -C
+sqlcmd -S localhost -U sa -P 'Aa123456@' -N -C
 
 -----------------------Install  Asp core 
 
