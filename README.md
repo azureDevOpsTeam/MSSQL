@@ -1,3 +1,32 @@
+UBUNTU 24.04
+
+#Install Dotnet 9
+```
+wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt update
+sudo apt install -y dotnet-sdk-9.0
+dotnet --version
+```
+
+#MS SQL SERVER 2022
+
+echo "deb [arch=amd64,arm64,armhf] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" | sudo tee /etc/apt/sources.list.d/mssql-server-2022.list
+curl -sSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+sudo apt update
+sudo apt install -y mssql-server
+sudo /opt/mssql/bin/mssql-conf setup
+systemctl status mssql-server
+
+#sqlCommand :
+sudo apt install -y mssql-tools unixodbc-dev
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+source ~/.bashrc
+
+sqlcmd -S localhost -U sa -P 'Aa123456@' -N -C
+
+
+----------------------UBUNTU 20.04 ----------------------
 ```
 curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
 sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
