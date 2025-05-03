@@ -28,64 +28,34 @@ source ~/.bashrc
 
 sqlcmd -S localhost -U sa -P 'Aa123456@' -N -C
 
-
-----------------------UBUNTU 20.04 ----------------------
-```
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
-sudo apt-get update
-sudo apt-get install -y mssql-server
-sudo /opt/mssql/bin/mssql-conf setup
-systemctl status mssql-server --no-pager
-```
-
-```
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-sudo apt-get update
-sudo apt-get install mssql-tools18 unixodbc-dev
-
-sudo apt-get update  
-sudo apt-get install mssql-tools18
-
-echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bash_profile
-source ~/.bash_profile
-
-echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-#Test Connection To SqlCmd 
-sqlcmd -S localhost -U sa -P 'Aa123456@' -N -C
-
------------------------Install  Asp core 
+-----------------------Install  NginX 
 
 ```
 sudo apt upgrade -y
 
-wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-sudo apt update -y
-sudo apt install -y dotnet-sdk-8.0
 sudo apt install nginx -y
 sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d api.draton.io
-sudo certbot --nginx -d bot.draton.io
+sudo certbot --nginx -d panel.draton.io
 ```
 
 ```
-#git clone https://github.com/azureDevOpsTeam/DratonApiPublish.git
-#cd DratonApiPublish
+#git clone https://github.com/azureDevOpsTeam/NexTerraApplication.git
+#cd NexTerraApplication
+#cd PresentationApp
+dotnet publish -c Release -r linux-x64
+
+cd bin/Release/...
+
 mkdir /var/www/api
-#sudo cp * /var/www/DratonApi
+#sudo cp * /var/www/api
 sudo nano /etc/nginx/sites-available/api
 ```
 ```
 server {
     listen 443 ssl;
-    server_name api.draton.io;
-    ssl_certificate /etc/letsencrypt/live/api.draton.io/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/api.draton.io/privkey.pem; # managed by Certbot
+    server_name panel.draton.io;
+    ssl_certificate /etc/letsencrypt/live/panel.draton.io/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/panel.draton.io/privkey.pem;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
@@ -105,7 +75,7 @@ server {
 # Redirect HTTP to HTTPS
 server {
     listen 80;
-    server_name api.draton.io;
+    server_name panel.draton.io;
     return 301 https://$host$request_uri;
 }
 ```
@@ -122,8 +92,8 @@ Description=Draton API Service
 After=network.target
 
 [Service]
-WorkingDirectory=/var/www/api/publish
-ExecStart=/usr/bin/dotnet /var/www/api/publish/PresentationWebApp.dll
+WorkingDirectory=/var/www/api
+ExecStart=/usr/bin/dotnet /var/www/api/PresentationApp.dll
 Restart=always
 # Environment variables for ASP.NET Core
 Environment=ASPNETCORE_ENVIRONMENT=Production
@@ -136,7 +106,7 @@ WantedBy=multi-user.target
 ```
 
 #Add Ssh-Key For CI/CD 
-ssh-keygen -t rsa -b 4096 -C "api@draton.io" -f ~/.ssh/id_rsa_api
+* ssh-keygen -t rsa -b 4096 -C "panel@draton.io" -f ~/.ssh/id_rsa_api
 ssh-keygen -t rsa -b 4096 -C "client@draton.io" -f ~/.ssh/id_rsa_client
 
 eval "$(ssh-agent -s)"
